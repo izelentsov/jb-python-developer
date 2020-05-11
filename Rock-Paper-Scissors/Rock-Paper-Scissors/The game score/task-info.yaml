@@ -107,6 +107,80 @@ files:
 
         RPSTest("rps.game").run_tests()
   learner_created: false
+- name: rps/game.py
+  visible: true
+  text: |
+    # Write your code here
+    import random
+
+
+    OPT_SCIS = 'scissors'
+    OPT_ROCK = 'rock'
+    OPT_PAPR = 'paper'
+
+    OPTS = [OPT_SCIS, OPT_ROCK, OPT_PAPR]
+
+    RES_WIN = 'win'
+    RES_DRAW = 'draw'
+    RES_LOSE = 'lose'
+
+    RULES = {
+        OPT_SCIS: {
+            OPT_SCIS: RES_DRAW,
+            OPT_ROCK: RES_LOSE,
+            OPT_PAPR: RES_WIN},
+        OPT_ROCK: {
+            OPT_SCIS: RES_WIN,
+            OPT_ROCK: RES_DRAW,
+            OPT_PAPR: RES_LOSE},
+        OPT_PAPR: {
+            OPT_SCIS: RES_LOSE,
+            OPT_ROCK: RES_WIN,
+            OPT_PAPR: RES_DRAW}}
+
+
+    MSG = {RES_WIN: 'Well done. Computer chose {} and failed',
+           RES_DRAW: 'There is a draw ({})',
+           RES_LOSE: 'Sorry, but computer chose {}'}
+
+
+    def msg(res, comp_opt):
+        return MSG[res].format(comp_opt)
+
+
+    def choose():
+        return random.choice(OPTS)
+
+
+    def user_result(user, comp):
+        return RULES[user][comp]
+
+
+    def valid_opt(s):
+        return s in OPTS
+
+
+    def run():
+
+        while True:
+            user_option = input()
+            if user_option == '!exit':
+                break
+            if valid_opt(user_option):
+                comp_option = choose()
+                res = user_result(user_option, comp_option)
+                print(msg(res, comp_option))
+            else:
+                print('Invalid input')
+
+        print('Bye!')
+
+
+    run()
+  learner_created: true
+- name: rps/rating.txt
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/78/stages/434/implement
-status: Unchecked
-record: -1
+status: Solved
+record: 4

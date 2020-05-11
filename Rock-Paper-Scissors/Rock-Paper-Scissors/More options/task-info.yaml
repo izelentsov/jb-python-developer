@@ -116,6 +116,115 @@ files:
     if __name__ == '__main__':
         RPSTest("rps.game").run_tests()
   learner_created: false
+- name: rps/rating.txt
+  visible: true
+  text: |
+    me 100
+  learner_created: true
+- name: rps/game.py
+  visible: true
+  text: |
+    # Write your code here
+    import random
+
+
+    OPT_SCIS = 'scissors'
+    OPT_ROCK = 'rock'
+    OPT_PAPR = 'paper'
+
+    OPTS = [OPT_SCIS, OPT_ROCK, OPT_PAPR]
+
+    RES_WIN = 'win'
+    RES_DRAW = 'draw'
+    RES_LOSE = 'lose'
+
+    RULES = {
+        OPT_SCIS: {
+            OPT_SCIS: RES_DRAW,
+            OPT_ROCK: RES_LOSE,
+            OPT_PAPR: RES_WIN},
+        OPT_ROCK: {
+            OPT_SCIS: RES_WIN,
+            OPT_ROCK: RES_DRAW,
+            OPT_PAPR: RES_LOSE},
+        OPT_PAPR: {
+            OPT_SCIS: RES_LOSE,
+            OPT_ROCK: RES_WIN,
+            OPT_PAPR: RES_DRAW}
+    }
+
+    SCORES = {
+        RES_WIN: 100,
+        RES_DRAW: 50,
+        RES_LOSE: 0
+    }
+
+
+    MSG = {RES_WIN: 'Well done. Computer chose {} and failed',
+           RES_DRAW: 'There is a draw ({})',
+           RES_LOSE: 'Sorry, but computer chose {}'}
+
+
+    def run():
+        uname = input("Enter your name: ")
+        print(f'Hello, {uname}')
+        score = restore_rating(uname)
+
+        while True:
+            user_option = input()
+            if user_option == '!exit':
+                break
+            if user_option == '!rating':
+                print(f'Your rating: {score}')
+                continue
+
+            if valid_opt(user_option):
+                score = play(user_option, score)
+            else:
+                print('Invalid input')
+
+        print('Bye!')
+
+
+    def restore_rating(name):
+        f = open('rating.txt', 'r')
+        r = dict()
+        for line in f:
+            u, rating = line.split()
+            r[u] = int(rating)
+        return r[name] if name in r else 0
+
+
+    def valid_opt(s):
+        return s in OPTS
+
+
+    def play(user_option, score):
+        comp_option = choose()
+        res = user_result(user_option, comp_option)
+        score += score_for(res)
+        print(msg(res, comp_option))
+        return score
+
+
+    def choose():
+        return random.choice(OPTS)
+
+
+    def user_result(user, comp):
+        return RULES[user][comp]
+
+
+    def score_for(res):
+        return SCORES[res]
+
+
+    def msg(res, comp_opt):
+        return MSG[res].format(comp_opt)
+
+
+    run()
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/78/stages/435/implement
-status: Unchecked
+status: Solved
 record: -1
