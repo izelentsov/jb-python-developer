@@ -1,5 +1,6 @@
 import sys
 import os
+import collections
 
 nytimes_com = '''
 This New Liquid Is Magnetic, and Mesmerizing
@@ -38,29 +39,53 @@ Twitter and Square Chief Executive Officer Jack Dorsey
 
 # write your code here
 
+
 def run():
 
     store_dir = sys.argv[1]
     if not os.path.exists(store_dir):
         os.mkdir(store_dir)
+    history = collections.deque()
+    current = None
 
     while True:
         cmd = input()
         if cmd == 'exit':
             break
 
-        text = get_stored(cmd, store_dir)
-        from_store = True
-        if not text:
-            from_store = False
-            if is_url(cmd):
-                text = get_url(cmd)
+        text, current = get_text(cmd, store_dir, history, current)
+
         if text:
             print(text)
-            if not from_store:
-                store(cmd, text, store_dir)
         else:
             print("Error: Incorrect URL")
+
+
+def get_text(cmd, store_dir, history, current):
+    if cmd == 'back':
+        cmd = go_back(history)
+        if not cmd:
+            return None, current
+    elif current:
+        history.append(current)
+
+    text = get_stored(cmd, store_dir)
+    if text:
+        return text, cmd
+
+    if is_url(cmd):
+        text = get_url(cmd)
+        if text:
+            st_name = store(cmd, text, store_dir)
+            return text, st_name
+
+    return None, cmd
+
+
+def go_back(history):
+    if len(history) > 0:
+        return history.pop()
+    return None
 
 
 def get_stored(cmd, store_dir):
@@ -88,6 +113,7 @@ def store(url, text, store_dir):
     name = store_name(url)
     with open(store_dir + '/' + name, 'w') as f:
         f.write(text)
+    return name
 
 
 def store_name(url):
