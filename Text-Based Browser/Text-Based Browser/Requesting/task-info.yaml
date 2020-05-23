@@ -100,6 +100,59 @@ files:
 
     TextBasedBrowserTest('browser.browser').run_tests()
   learner_created: false
+- name: browser/browser.py
+  visible: true
+  text: "import sys\nimport os\nimport collections\n\nnytimes_com = '''\nThis New\
+    \ Liquid Is Magnetic, and Mesmerizing\n\nScientists have created “soft” magnets\
+    \ that can flow \nand change shape, and that could be a boon to medicine \nand\
+    \ robotics. (Source: New York Times)\n\n\nMost Wikipedia Profiles Are of Men.\
+    \ This Scientist Is Changing That.\n\nJessica Wade has added nearly 700 Wikipedia\
+    \ biographies for\n important female and minority scientists in less than two\
+    \ \n years.\n\n'''\n\nbloomberg_com = '''\nThe Space Race: From Apollo 11 to Elon\
+    \ Musk\n\nIt's 50 years since the world was gripped by historic images\n of Apollo\
+    \ 11, and Neil Armstrong -- the first man to walk \n on the moon. It was the height\
+    \ of the Cold War, and the charts\n were filled with David Bowie's Space Oddity,\
+    \ and Creedence's \n Bad Moon Rising. The world is a very different place than\
+    \ \n it was 5 decades ago. But how has the space race changed since\n the summer\
+    \ of '69? (Source: Bloomberg)\n\n\nTwitter CEO Jack Dorsey Gives Talk at Apple\
+    \ Headquarters\n\nTwitter and Square Chief Executive Officer Jack Dorsey \n addressed\
+    \ Apple Inc. employees at the iPhone maker’s headquarters\n Tuesday, a signal\
+    \ of the strong ties between the Silicon Valley giants.\n'''\n\n# write your code\
+    \ here\n\n\ndef run():\n\n    store_dir = sys.argv[1]\n    if not os.path.exists(store_dir):\n\
+    \        os.mkdir(store_dir)\n    history = collections.deque()\n    current =\
+    \ None\n\n    while True:\n        print(f\"State: {current}; {history}\")\n \
+    \       cmd = input()\n        if cmd == 'exit':\n            break\n\n      \
+    \  text, current = get_text(cmd, store_dir, history, current)\n\n        if text:\n\
+    \            print(text)\n        else:\n            print(\"Error: Incorrect\
+    \ URL\")\n\n\ndef get_text(cmd, store_dir, history, current):\n    if cmd == 'back':\n\
+    \        cmd = go_back(history)\n        if not cmd:\n            return None,\
+    \ current\n    elif current:\n        history.append(current)\n\n    text = get_stored(cmd,\
+    \ store_dir)\n    if text:\n        return text, cmd\n\n    if is_url(cmd):\n\
+    \        text = get_url(cmd)\n        if text:\n            st_name = store(cmd,\
+    \ text, store_dir)\n            return text, st_name\n\n    return None, cmd\n\
+    \n\ndef go_back(history):\n    if len(history) > 0:\n        return history.pop()\n\
+    \    return None\n\n\ndef get_stored(cmd, store_dir):\n    path = store_dir +\
+    \ '/' + cmd\n    if os.path.exists(path):\n        with open(path, 'r') as f:\n\
+    \            return f.read()\n    return None\n\n\ndef is_url(cmd):\n    return\
+    \ '.' in cmd\n\n\ndef get_url(url):\n    text = None\n    if url == 'nytimes.com':\n\
+    \        text = nytimes_com\n    elif url == 'bloomberg.com':\n        text =\
+    \ bloomberg_com\n    return text\n\n\ndef store(url, text, store_dir):\n    name\
+    \ = store_name(url)\n    with open(store_dir + '/' + name, 'w') as f:\n      \
+    \  f.write(text)\n    return name\n\n\ndef store_name(url):\n    return url[:url.rindex('.')]\n\
+    \n\nrun()\n"
+  learner_created: true
+- name: browser/store/nytimes
+  visible: true
+  learner_created: true
+- name: browser/store/bloomberg
+  visible: true
+  learner_created: true
+- name: browser/store/google
+  visible: true
+  learner_created: true
+- name: browser/store/python
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/79/stages/439/implement
-status: Unchecked
-record: -1
+status: Solved
+record: 4

@@ -102,6 +102,22 @@ topics:
     theory_id: 5161
   - title: Stack
     theory_id: 5252
+  - title: Computer programming
+    theory_id: 8739
+  - title: Intro to computational thinking
+    theory_id: 8742
+  - title: Components of computational thinking
+    theory_id: 8745
+  - title: Else statement
+    theory_id: 5932
+  - title: Elif statement
+    theory_id: 5926
+  - title: Functional decomposition
+    theory_id: 9571
+  - title: List comprehension
+    theory_id: 6315
+  - title: Algorithms in Python
+    theory_id: 7316
   - title: Stack in Python
     theory_id: 8915
   3:
