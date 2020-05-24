@@ -2,9 +2,25 @@ import sys
 import os
 import collections
 import requests
+import bs4
 
 
 # write your code here
+TAGS = {
+    'p': {'block': True},
+    'h1': {'block': True},
+    'h2': {'block': True},
+    'h3': {'block': True},
+    'h4': {'block': True},
+    'h5': {'block': True},
+    'h6': {'block': True},
+    'ul': {'block': True},
+    'ol': {'block': True},
+    'li': {'block': True},
+    'a': {'block': False},
+    'title': {'block': True}
+}
+
 
 
 def run():
@@ -44,6 +60,7 @@ def get_text(cmd, store_dir, history, current):
     if is_url(cmd):
         text = get_url(cmd)
         if text:
+            text = render(text)
             st_name = store(cmd, text, store_dir)
             return text, st_name
 
@@ -90,4 +107,30 @@ def store_name(url):
     return s[:s.rindex('.')]
 
 
+def render(html):
+    soup = bs4.BeautifulSoup(html, features="html.parser")
+    return render_tag(soup.html)
+
+
+def render_tag(tag):
+    if tag.name in TAGS.keys():
+        newline = TAGS[tag.name]['block']
+        return render_tag_text(tag, withtext=True, newline=newline)
+    return render_tag_text(tag, withtext=False, newline=False)
+
+
+def render_tag_text(p, withtext, newline):
+    text = ''
+    for part in p.contents:
+        text += render_content(part, withtext=withtext)
+    return text + ('\n' if newline else '')
+
+
+def render_content(part, withtext):
+    if isinstance(part, bs4.element.NavigableString):
+        return str(part).strip() if withtext else ''
+    return render_tag(part)
+
+
+#print(render("<body><h1>h1</h1><p><a>1</a></p><p><a>2</a></p></body>"))
 run()
