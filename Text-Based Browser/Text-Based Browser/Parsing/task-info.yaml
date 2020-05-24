@@ -199,18 +199,12 @@ files:
 
     run()
   learner_created: true
-- name: tb_tabs/nytimes
-  visible: true
-  learner_created: true
 - name: browser/store/nytimes
   visible: true
   learner_created: true
 - name: browser/store/docs.python
   visible: true
   learner_created: true
-- name: tb_tabs/3.python-requests
-  visible: true
-  learner_created: true
 feedback_link: https://hyperskill.org/projects/79/stages/440/implement
 status: Solved
-record: -1
+record: 5

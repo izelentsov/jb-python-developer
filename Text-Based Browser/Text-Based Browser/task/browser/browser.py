@@ -3,6 +3,11 @@ import os
 import collections
 import requests
 import bs4
+import colorama
+from colorama import Fore
+
+
+colorama.init()
 
 
 # write your code here
@@ -17,7 +22,7 @@ TAGS = {
     'ul': {'block': True},
     'ol': {'block': True},
     'li': {'block': True},
-    'a': {'block': False},
+    'a': {'block': False, 'fore': Fore.BLUE},
     'title': {'block': True}
 }
 
@@ -114,15 +119,21 @@ def render(html):
 
 def render_tag(tag):
     if tag.name in TAGS.keys():
-        newline = TAGS[tag.name]['block']
-        return render_tag_text(tag, withtext=True, newline=newline)
+        config = TAGS[tag.name]
+        newline = config['block']
+        color = config['fore'] if 'fore' in config else None
+        return render_tag_text(tag, withtext=True, newline=newline, color=color)
     return render_tag_text(tag, withtext=False, newline=False)
 
 
-def render_tag_text(p, withtext, newline):
+def render_tag_text(p, withtext, newline, color=None):
     text = ''
+    if color:
+        text += color
     for part in p.contents:
         text += render_content(part, withtext=withtext)
+    if color:
+        text += Fore.RESET
     return text + ('\n' if newline else '')
 
 
