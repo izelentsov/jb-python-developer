@@ -1,0 +1,33 @@
+type: edu
+custom_name: stage5
+files:
+- name: tests.py
+  visible: false
+  text: |
+    from hstest.stage_test import *
+    from hstest.test_case import TestCase
+
+    CheckResult.correct = lambda: CheckResult(True, '')
+    CheckResult.wrong = lambda feedback: CheckResult(False, feedback)
+
+
+    class CalcTest(StageTest):
+        def generate(self) -> List[TestCase]:
+            cases = {"100 + 200 - 300\n/exit": "0\nBye!",
+                     "4 + 6 - 8\n\n\n2 - 3 - 4\n\n8 + 7 - 4\n/exit": "2\n-5\n11\nBye!",
+                     "abc\n123+\n+15\n18 22\n\n-22\n22-\n/exit": "Invalid expression\nInvalid expression\n15\nInvalid expression\n-22\nInvalid expression\nBye!",
+                     "/go\n/exit": "Unknown command\nBye!"}
+            return [TestCase(stdin=case,
+                             attach=cases[case])
+                    for case in cases]
+
+        def check(self, reply: str, attach) -> CheckResult:
+            return CheckResult(reply.strip() == attach.strip(), "")
+
+
+    if __name__ == '__main__':
+        CalcTest("calculator.calculator").run_tests()
+  learner_created: false
+feedback_link: https://hyperskill.org/projects/74/stages/413/implement
+status: Unchecked
+record: -1
