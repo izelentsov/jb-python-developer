@@ -245,6 +245,120 @@ files:
     if __name__ == '__main__':
         CreditCalcTest('creditcalc.creditcalc').run_tests()
   learner_created: false
+- name: creditcalc/creditcalc.py
+  visible: true
+  text: |
+    import math
+
+
+    class ParamsBuffer:
+        def __init__(self, what):
+            self.what = what
+            self.params = {
+                'p': {'val': None, 'prompt': 'Enter credit principal'},
+                'a': {'val': None, 'prompt': 'Enter monthly payment'},
+                'n': {'val': None, 'prompt': 'Enter count of months'},
+                'i': {'val': None, 'prompt': 'Enter credit interest'}
+            }
+
+        def value(self, p):
+            return self.params[p]['val']
+
+        def all_filled(self):
+            return all(not self.must_fill(p) for p in self.params)
+
+        def next_unfilled(self):
+            for p in self.params:
+                if self.must_fill(p):
+                    return self.params[p]
+            return None
+
+        def must_fill(self, p):
+            return not self.value(p) and p != self.what
+
+        def to_params(self):
+            return Params(
+                self.value('p'),
+                self.value('a'),
+                self.value('n'),
+                self.value('i'))
+
+
+    class Params:
+        def __init__(self, principal, monthly, cnt, interest):
+            self.principal = principal
+            self.monthly = monthly
+            self.cnt = cnt
+            self.interest = interest
+
+
+    def main():
+        print('What do you want to calculate?')
+        print('type "n" - for count of months,')
+        print('type "a" - for annuity monthly payment,')
+        print('type "p" - for credit principal:')
+        what = input()
+
+        buf = ParamsBuffer(what)
+        while not buf.all_filled():
+            p = buf.next_unfilled()
+            prompt = p['prompt'] + ': '
+            p['val'] = float(input(prompt))
+        params = buf.to_params()
+
+        if what == 'n':
+            calculate_months(params)
+        elif what == 'a':
+            calculate_monthly_payment(params)
+        else:
+            calculate_principal(params)
+
+
+    def calculate_months(p):
+        rate = p.interest / 100.0 / 12
+        months = math.ceil(math.log(p.monthly / (p.monthly - rate * p.principal), 1 + rate))
+        str = years_and_months(months)
+        print('')
+        print(f'It takes {str} to repay the credit')
+
+
+    def calculate_monthly_payment(p):
+        rate = p.interest / 100.0 / 12
+        pay = math.ceil(p.principal * (rate * (1 + rate) ** p.cnt) / ((1 + rate) ** p.cnt - 1))
+        print(f'Your annuity payment = {pay}')
+
+
+    def calculate_principal(p):
+        rate = p.interest / 100.0 / 12
+        xn = (1 + rate) ** p.cnt
+        pr = p.monthly / ((rate * xn) / (xn - 1))
+        print('')
+        print(f'Your credit principal = {pr}')
+
+
+    def years_and_months(months):
+        years = months // 12
+        m = months % 12
+        text = ''
+        if years > 0:
+            text += n_smth(years, 'year')
+        if m > 0:
+            if len(text) > 0:
+                text += ' and '
+            text += n_smth(m, 'month')
+        return text
+
+    def n_years(n):
+        return n_smth(n, 'year')
+
+
+    def n_smth(n, smth):
+        s = smth if n == 1 else smth + 's'
+        return f'{n} {s}'
+
+
+    main()
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/90/stages/503/implement
-status: Unchecked
+status: Solved
 record: -1
