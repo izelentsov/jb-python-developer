@@ -1,29 +1,44 @@
 # write your code here
 
+TYPE_NONE = 0
+TYPE_CMD = 1
+TYPE_ASSIGN = 2
+TYPE_EXPR = 3
+
 CMD_EXIT = "exit"
 CMD_HELP = "help"
 
 
 def main():
+    var = {}
     while True:
-        cmd, expr = read_input()
-        if cmd:
-            stop = do_cmd(cmd)
-            if stop:
-                break
-        if len(expr) > 0:
-            try_process(expr)
+        inp_type, inp = read_input()
+        stop = process_input(inp_type, inp, var)
+        if stop:
+            break
     print('Bye!')
 
 
 def read_input():
     line = input().strip()
     if line.startswith('/'):
-        return line[1:], []
-    tokens = line.split()
-    if len(tokens) >= 1:
-        return None, tokens
-    return None, []
+        return TYPE_CMD, line[1:]
+    if len(line) == 0:
+        return TYPE_NONE, None
+    if "=" in line:
+        return TYPE_ASSIGN, line
+    return TYPE_EXPR, line
+
+
+def process_input(inp_type, inp, var):
+    stop = False
+    if inp_type == TYPE_CMD:
+        stop = do_cmd(inp)
+    elif inp_type == TYPE_ASSIGN:
+        try_process_assign(inp, var)
+    elif inp_type == TYPE_EXPR:
+        try_process_expr(inp, var)
+    return stop
 
 
 def do_cmd(cmd):
@@ -40,32 +55,78 @@ def print_help():
     print('The program calculates expressions with additions and subtractions')
 
 
-def try_process(expr):
+def try_process_assign(inp, var):
+    toks = inp.split(sep='=')
+    if len(toks) != 2:
+        print("Invalid assignment")
+        return
+    left = toks[0].strip()
+    right = toks[1].strip()
+    if not is_valid_identifier(left):
+        print("Invalid identifier")
+        return
+    if not is_int_literal(right) and not is_valid_identifier(right):
+        print("Invalid assignment")
+        return
+    rval = value_of_term(right, var)
+    if rval is not None:
+        var[left] = rval
+
+
+def is_valid_identifier(term):
+    return all(c.isalpha() for c in term)
+
+
+def try_process_expr(expr, var):
+    res = None
     try:
-        res = evaluate_expr(expr)
+        res = evaluate_expr(expr, var)
     except ValueError:
+        print("Invalid expression")
         res = None
     finally:
-        if res is None:
-            print("Invalid expression")
-        else:
+        if res is not None:
             print(res)
 
 
-def evaluate_expr(expr):
+def evaluate_expr(expr, var):
     buf = None
     op = None
-    for term in expr:
+    toks = expr.split()
+    for term in toks:
         if not buf:
-            buf = int(term)
+            buf = value_of_term(term, var)
+            if buf is None:
+                return None
         elif not op:
             op = simplify_op(term)
             if not op:
+                print("Invalid expression")
                 return None
         else:
-            buf = evaluate(op, buf, int(term))
+            val2 = value_of_term(term, var)
+            if val2 is None:
+                return None
+            buf = evaluate(op, buf, val2)
             op = None
     return buf
+
+
+def value_of_term(term, var):
+    if is_int_literal(term):
+        return int(term)
+    if is_known_var(term, var):
+        return var[term]
+    print("Unknown variable")
+    return None
+
+
+def is_int_literal(term):
+    return all(c.isdigit() for c in term)
+
+
+def is_known_var(v, var):
+    return v in var
 
 
 def simplify_op(op):
