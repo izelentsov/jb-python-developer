@@ -25,7 +25,7 @@ files:
             return FieldState.X
         elif symbol == 'O':
             return FieldState.O
-        elif symbol == ' ':
+        elif symbol == ' ' or symbol == '_':
             return FieldState.FREE
         else:
             return None
@@ -95,7 +95,7 @@ files:
 
             for line in lines:
                 for c in line:
-                    if c not in 'XO| ':
+                    if c not in 'XO|_ ':
                         return None
 
             field: List[List[Optional[FieldState]]] = [
