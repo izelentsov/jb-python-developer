@@ -10,10 +10,19 @@ ST_DRAW = 1
 ST_X_WINS = 2
 ST_O_WINS = 3
 
+PL_USER = 0
+PL_AI_EASY = 1
+
+CMD_START = 0
+CMD_EXIT = 1
+
 
 def main():
-    game = Game(empty_field(), UI())
-    game.play()
+    ui = UI()
+    cmd, player1, player2 = ui.menu()
+    if cmd == CMD_START:
+        game = Game(empty_field(), ui, player1, player2)
+        game.play()
 
 
 def empty_field():
@@ -21,9 +30,11 @@ def empty_field():
 
 
 class Game:
-    def __init__(self, field, ui):
+    def __init__(self, field, ui, p_x, p_o):
         self.field = field
         self.ui = ui
+        self.p_x = p_x
+        self.p_o = p_o
 
     def play(self):
         self.ui.print_field(self.field)
@@ -44,9 +55,10 @@ class Game:
         return SIDE_X if xs <= os else SIDE_O
 
     def next_move(self, side):
-        if side == SIDE_X:
+        p = self.p_x if side == SIDE_X else self.p_o
+        if p == PL_USER:
             return self.get_move()
-        return self.ai_move()
+        return self.ai_move(p)
 
     def get_move(self):
         move = None
@@ -59,8 +71,11 @@ class Game:
                 break
         return move
 
-    def ai_move(self):
-        self.ui.print_move("easy")
+    def ai_move(self, level):
+        self.ui.print_move(level)
+        return self.ai_move_easy()
+
+    def ai_move_easy(self):
         empty = self.field.empty_cells()
         return random.choice(empty)
 
@@ -134,6 +149,44 @@ class UI:
     def __init__(self):
         pass
 
+    def menu(self):
+        cmd = None
+        while cmd is None:
+            inp = input("Input command: ")
+            cmd, p1, p2 = self.parse_menu_input(inp)
+            if cmd is not None:
+                return cmd, p1, p2
+            print("Bad Parameters!")
+
+    def parse_menu_input(self, inp):
+        toks = inp.split()
+        if len(toks) == 0:
+            return None, None, None
+        cmd = toks[0]
+        if cmd == "exit":
+            return CMD_EXIT, None, None
+        if cmd == "start":
+            if len(toks) >= 3:
+                p1 = toks[1]
+                p2 = toks[2]
+                ps = self.validate_players(p1, p2)
+                if ps is not None:
+                    return CMD_START, ps[0], ps[1]
+        return None, None, None
+
+    def validate_players(self, *players):
+        res = [self.player_type(p) for p in players]
+        if all(p is not None for p in res):
+            return res
+        return None
+
+    def player_type(self, p):
+        if p == "user":
+            return PL_USER
+        if p == "easy":
+            return PL_AI_EASY
+        return None
+
     def get_field(self):
         f = input('Enter cells: ')
         r1 = list(f[:3])
@@ -189,7 +242,9 @@ class UI:
             print("O wins")
 
     def print_move(self, level):
-        print(f'Making move level "{level}"')
+        if level == PL_AI_EASY:
+            p = "easy"
+        print(f'Making move level "{p}"')
 
 
 main()
