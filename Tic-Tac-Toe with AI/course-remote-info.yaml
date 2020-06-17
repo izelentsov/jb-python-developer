@@ -131,6 +131,8 @@ topics:
   - title: Methods and attributes
     theory_id: 6981
   3:
+  - title: Inheritance
+    theory_id: 9844
   - title: Magic methods
     theory_id: 7139
   - title: Inheritance
