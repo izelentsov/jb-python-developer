@@ -1,4 +1,5 @@
 # write your code here
+import random
 
 SIDE_X = 'X'
 SIDE_O = 'O'
@@ -11,11 +12,12 @@ ST_O_WINS = 3
 
 
 def main():
-    ui = UI()
-    field = ui.get_field()
-    ui.print_field(field)
-    game = Game(field, ui)
+    game = Game(empty_field(), UI())
     game.play()
+
+
+def empty_field():
+    return Field([list("___"), list("___"), list("___")])
 
 
 class Game:
@@ -24,18 +26,27 @@ class Game:
         self.ui = ui
 
     def play(self):
-        side = self.whose_turn()
-        move = self.get_move()
-        if move:
-            self.field.put(side, move)
-            self.ui.print_field(self.field)
-            state = self.game_state()
-            self.ui.print_state(state)
+        self.ui.print_field(self.field)
+        state = self.game_state()
+
+        while state == ST_NONE:
+            side = self.whose_turn()
+            move = self.next_move(side)
+            if move:
+                self.field.put(side, move)
+                self.ui.print_field(self.field)
+                state = self.game_state()
+        self.ui.print_state(state)
 
     def whose_turn(self):
         xs = self.field.count_side(SIDE_X)
         os = self.field.count_side(SIDE_O)
         return SIDE_X if xs <= os else SIDE_O
+
+    def next_move(self, side):
+        if side == SIDE_X:
+            return self.get_move()
+        return self.ai_move()
 
     def get_move(self):
         move = None
@@ -47,6 +58,11 @@ class Game:
             else:
                 break
         return move
+
+    def ai_move(self):
+        self.ui.print_move("easy")
+        empty = self.field.empty_cells()
+        return random.choice(empty)
 
     def game_state(self):
         winner = self.get_winner()
@@ -104,6 +120,14 @@ class Field:
 
     def put(self, side, xy):
         self.cells[xy[1]][xy[0]] = side
+
+    def empty_cells(self):
+        empty = []
+        for y in range(3):
+            for x in range(3):
+                if self.cells[y][x] == BLANK:
+                    empty.append((x, y))
+        return empty
 
 
 class UI:
@@ -163,6 +187,9 @@ class UI:
             print("X wins")
         if state == ST_O_WINS:
             print("O wins")
+
+    def print_move(self, level):
+        print(f'Making move level "{level}"')
 
 
 main()
