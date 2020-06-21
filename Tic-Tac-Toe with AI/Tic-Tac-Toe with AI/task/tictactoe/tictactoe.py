@@ -10,8 +10,11 @@ ST_DRAW = 1
 ST_X_WINS = 2
 ST_O_WINS = 3
 
-PL_USER = 0
-PL_AI_EASY = 1
+PLAYERS = {
+    "user": lambda field, ui: UserPlayer(field, ui, "user"),
+    "easy": lambda field, ui: EasyAiPlayer(field, ui, "easy"),
+    "medium": lambda field, ui: MediumAiPlayer(field, ui, "medium")
+}
 
 CMD_START = 0
 CMD_EXIT = 1
@@ -21,12 +24,54 @@ def main():
     ui = UI()
     cmd, player1, player2 = ui.menu()
     if cmd == CMD_START:
-        game = Game(empty_field(), ui, player1, player2)
+        field = empty_field()
+        p1 = make_player(player1, field, ui)
+        p2 = make_player(player2, field, ui)
+        game = Game(field, ui, p1, p2)
         game.play()
 
 
 def empty_field():
     return Field([list("___"), list("___"), list("___")])
+
+
+def make_player(player_type, field, ui):
+    print(f'Making player {player_type}')
+    return PLAYERS[player_type](field, ui)
+
+
+class Player:
+    def __init__(self, field, ui, level):
+        self.field = field
+        self.ui = ui
+        self.level = level
+
+
+class UserPlayer(Player):
+    def move(self):
+        move = None
+        while not move:
+            move = self.ui.ask_move()
+            if self.field.is_occupied(move):
+                print('This cell is occupied! Choose another one!')
+                move = None
+            else:
+                break
+        return move
+
+
+class EasyAiPlayer(Player):
+    def move(self):
+        self.ui.print_move(self)
+        empty = self.field.empty_cells()
+        return random.choice(empty)
+
+
+class MediumAiPlayer(Player):
+    def move(self):
+        self.ui.print_move(self)
+        empty = self.field.empty_cells()
+        return random.choice(empty)
 
 
 class Game:
@@ -56,28 +101,7 @@ class Game:
 
     def next_move(self, side):
         p = self.p_x if side == SIDE_X else self.p_o
-        if p == PL_USER:
-            return self.get_move()
-        return self.ai_move(p)
-
-    def get_move(self):
-        move = None
-        while not move:
-            move = self.ui.ask_move()
-            if self.field.is_occupied(move):
-                print('This cell is occupied! Choose another one!')
-                move = None
-            else:
-                break
-        return move
-
-    def ai_move(self, level):
-        self.ui.print_move(level)
-        return self.ai_move_easy()
-
-    def ai_move_easy(self):
-        empty = self.field.empty_cells()
-        return random.choice(empty)
+        return p.move()
 
     def game_state(self):
         winner = self.get_winner()
@@ -169,23 +193,12 @@ class UI:
             if len(toks) >= 3:
                 p1 = toks[1]
                 p2 = toks[2]
-                ps = self.validate_players(p1, p2)
-                if ps is not None:
-                    return CMD_START, ps[0], ps[1]
+                if self.validate_players(p1, p2):
+                    return CMD_START, p1, p2
         return None, None, None
 
     def validate_players(self, *players):
-        res = [self.player_type(p) for p in players]
-        if all(p is not None for p in res):
-            return res
-        return None
-
-    def player_type(self, p):
-        if p == "user":
-            return PL_USER
-        if p == "easy":
-            return PL_AI_EASY
-        return None
+        return all(p in PLAYERS.keys() for p in players)
 
     def get_field(self):
         f = input('Enter cells: ')
@@ -241,10 +254,8 @@ class UI:
         if state == ST_O_WINS:
             print("O wins")
 
-    def print_move(self, level):
-        if level == PL_AI_EASY:
-            p = "easy"
-        print(f'Making move level "{p}"')
+    def print_move(self, player):
+        print(f'Making move level "{player.level}"')
 
 
 main()
