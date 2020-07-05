@@ -13,7 +13,8 @@ ST_O_WINS = 3
 PLAYERS = {
     "user": lambda field, ui, side: UserPlayer(field, ui, "user", side),
     "easy": lambda field, ui, side: EasyAiPlayer(field, ui, "easy", side),
-    "medium": lambda field, ui, side: MediumAiPlayer(field, ui, "medium", side)
+    "medium": lambda field, ui, side: MediumAiPlayer(field, ui, "medium", side),
+    "hard": lambda field, ui, side: HardAiPlayer(field, ui, "hard", side)
 }
 
 CMD_START = 0
@@ -32,7 +33,7 @@ def main():
 
 
 def empty_field():
-    return Field([list("___"), list("___"), list("___")])
+    return Field(list("_________"))
 
 
 def make_player(player_type, field, ui, side):
@@ -52,7 +53,7 @@ class UserPlayer(Player):
         move = None
         while not move:
             move = self.ui.ask_move()
-            if self.field.is_occupied(move):
+            if self.field.is_occupied(move[0], move[1]):
                 print('This cell is occupied! Choose another one!')
                 move = None
             else:
@@ -101,6 +102,56 @@ class MediumAiPlayer(Player):
         return SIDE_O if self.side == SIDE_X else SIDE_X
 
 
+class HardAiPlayer(Player):
+    def move(self):
+        self.ui.print_move(self)
+        if len(self.field.empty_cells()) == 9:
+            move = random.choice(self.field.empty_cells())
+        else:
+            move = self.minimax(self.field, self.side).cell
+        return move.x, move.y
+
+    def minimax(self, field, cur_side):
+        other_side = SIDE_X if cur_side == SIDE_O else SIDE_O
+
+        winner = get_winner(field)
+        if not field.has_blanks():
+            if winner == self.side:
+                return ScoredMove(None, 10)
+            if winner == other_side:
+                return ScoredMove(None, -10)
+            return ScoredMove(None, 0)
+
+        moves = [(cell, self.next_field(field, cell, cur_side)) for cell in field.empty_cells()]
+        scored = [ScoredMove(move[0], self.minimax(move[1], other_side).score) for move in moves]
+        best = self.best_move(scored, cur_side)
+        return best
+
+    def next_field(self, field, cell, side):
+        res = field.clone()
+        res.put(side, cell.x, cell.y)
+        return res
+
+    def best_move(self, scored, cur_side):
+        best_score = -100 if cur_side == self.side else 100
+        best_move = None
+        for s in scored:
+            if (cur_side == self.side and s.score > best_score) or \
+                    (cur_side != self.side and s.score < best_score):
+                best_score = s.score
+                best_move = s
+        return best_move
+
+
+class ScoredMove:
+    def __init__(self, cell, score):
+        self.cell = cell
+        self.score = score
+
+    def __str__(self):
+        return f"ScoredMove({str(self.cell)}, {self.score})"
+
+
 class Game:
     def __init__(self, field, ui, p_x, p_o):
         self.field = field
@@ -116,7 +167,7 @@ class Game:
             side = self.whose_turn()
             move = self.next_move(side)
             if move:
-                self.field.put(side, move)
+                self.field.put(side, move[0], move[1])
                 self.ui.print_field(self.field)
                 state = self.game_state()
         self.ui.print_state(state)
@@ -131,7 +182,7 @@ class Game:
         return p.move()
 
     def game_state(self):
-        winner = self.get_winner()
+        winner = get_winner(self.field)
         if winner == SIDE_O:
             return ST_O_WINS
         if winner == SIDE_X:
@@ -140,48 +191,63 @@ class Game:
             return ST_NONE
         return ST_DRAW
 
-    def get_winner(self):
-        for line in self.field.lines():
-            winner = self.who_strikes(line)
-            if winner:
-                return winner
 
-    def who_strikes(self, line):
-        if line.count_side(SIDE_X) == 3:
-            return SIDE_X
-        if line.count_side(SIDE_O) == 3:
-            return SIDE_O
-        return None
+def get_winner(field):
+    for line in field.lines():
+        winner = who_strikes(line)
+        if winner:
+            return winner
+    return None
+
+
+def who_strikes(line):
+    if line.count_side(SIDE_X) == 3:
+        return SIDE_X
+    if line.count_side(SIDE_O) == 3:
+        return SIDE_O
+    return None
 
 
 class Field:
     def __init__(self, values):
-        self.cells = [[Cell(x, y, values[y][x]) for x in range(3)] for y in range(3)]
+        self.values = values
+
+    def clone(self):
+        return Field(list(self.values))
 
     def has_blanks(self):
-        return any(c.value == BLANK for row in self.cells for c in row)
+        return any(c == BLANK for c in self.values)
 
     def count_side(self, side):
-        return len([cell for row in self.cells for cell in row if cell.value == side])
+        return self.values.count(side)
 
-    def is_occupied(self, xy):
-        return self.cells[xy[1]][xy[0]].value != BLANK
+    def ind(self, x, y):
+        return y * 3 + x
 
-    def put(self, side, xy):
-        self.cells[xy[1]][xy[0]].value = side
+    def get(self, x, y):
+        return self.values[self.ind(x, y)]
+
+    def cell(self, x, y):
+        return Cell(x, y, self.get(x, y))
+
+    def put(self, side, x, y):
+        self.values[self.ind(x, y)] = side
+
+    def is_occupied(self, x, y):
+        return self.get(x, y) != BLANK
 
     def empty_cells(self):
-        return [cell for row in self.cells for cell in row if cell.value == BLANK]
+        return [self.cell(x, y) for y in range(3) for x in range(3) if self.get(x, y) == BLANK]
 
     def rows(self):
-        return [Line(row) for row in self.cells]
+        return [Line([self.cell(x, y) for x in range(3)]) for y in range(3)]
 
     def cols(self):
-        return [Line([row[x] for row in self.cells]) for x in range(3)]
+        return [Line([self.cell(x, y) for y in range(3)]) for x in range(3)]
 
     def diags(self):
-        diag1 = Line([self.cells[x][x] for x in range(3)])
-        diag2 = Line([self.cells[x][2 - x] for x in range(3)])
+        diag1 = Line([self.cell(x, x) for x in range(3)])
+        diag2 = Line([self.cell(x, 2 - x) for x in range(3)])
         return [diag1, diag2]
 
     def lines(self):

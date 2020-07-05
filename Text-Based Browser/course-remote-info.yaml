@@ -53,8 +53,8 @@ topics:
   1:
   - title: Files
     theory_id: 6989
-  - title: Command line overview
-    theory_id: 8977
+  - title: Computer programming
+    theory_id: 8739
   - title: IDE
     theory_id: 3805
   - title: Quotes and multi-line strings
@@ -81,8 +81,6 @@ topics:
     theory_id: 6972
   - title: Load module
     theory_id: 6019
-  - title: Command line arguments
-    theory_id: 7981
   - title: Files in Python
     theory_id: 8691
   - title: Reading files
@@ -91,6 +89,14 @@ topics:
     theory_id: 8334
   - title: Context manager
     theory_id: 8702
+  - title: Introduction to operating systems
+    theory_id: 9704
+  - title: Command line overview
+    theory_id: 8977
+  - title: Parameters and options
+    theory_id: 9746
+  - title: Command line arguments
+    theory_id: 7981
   - title: PyCharm basics
     theory_id: 6193
   2:
@@ -102,8 +108,6 @@ topics:
     theory_id: 5161
   - title: Stack
     theory_id: 5252
-  - title: Computer programming
-    theory_id: 8739
   - title: Intro to computational thinking
     theory_id: 8742
   - title: Components of computational thinking

@@ -88,6 +88,10 @@ class TicTacToeField:
                  i.startswith('|') and i.endswith('|')]
 
         for line in lines:
+            if len(line) != 9:
+                raise WrongAnswerException(
+                    f"Line of Tic-Tac-Toe field should be 9 characters long\n"
+                    f"found {len(line)} characters in \"{line}\"")
             for c in line:
                 if c not in 'XO|_ ':
                     return None
