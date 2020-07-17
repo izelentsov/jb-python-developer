@@ -2,7 +2,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Date
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
@@ -27,8 +27,12 @@ def main():
     while True:
         action = ask_action()
         if action == 1:
-            print_tasks(session)
+            today_tasks(session)
         elif action == 2:
+            week_tasks(session)
+        elif action == 3:
+            all_tasks(session)
+        elif action == 4:
             add_task(session)
         else:
             break
@@ -36,26 +40,60 @@ def main():
 
 def ask_action():
     print("1) Today's tasks")
-    print("2) Add task")
+    print("2) Week's tasks")
+    print("3) All tasks")
+    print("4) Add task")
     print("0) Exit")
     return int(input())
 
 
-def print_tasks(session):
-    rows = session.query(TaskTable).all()
+def today_tasks(session):
+    today = datetime.today().date()
+    rows = session\
+        .query(TaskTable)\
+        .filter(TaskTable.deadline == today)\
+        .all()
+    print_tasks(rows)
+
+
+def week_tasks(session):
+    today = datetime.today()
+    for n in range(7):
+        date = (today + timedelta(days=n)).date()
+        rows = session\
+            .query(TaskTable)\
+            .filter(TaskTable.deadline == date)\
+            .all()
+        print(date.strftime("%A %d %b"), ":")
+        print_tasks(rows)
+
+
+def all_tasks(session):
+    rows = session\
+        .query(TaskTable)\
+        .all()
+    print_tasks(rows)
+
+
+def print_tasks(rows):
     if len(rows) == 0:
         print('Nothing to do!')
     else:
         for n in range(len(rows)):
-            task = rows[n].task
-            print(f'{n + 1}. {task}')
+            row = rows[n]
+            dl = row.deadline
+            dl_str = f'{dl.day} {dl.strftime("%b")}'
+            print(f'{n + 1}. {row.task} {dl_str}')
     print()
 
 
 def add_task(session):
     print("Enter task")
     task = input()
-    row = TaskTable(task=task, deadline=datetime.today())
+    print("Enter deadline")
+    deadline = input()
+    dl = datetime.strptime(deadline, "%Y-%m-%d")
+    row = TaskTable(task=task, deadline=dl)
     session.add(row)
     session.commit()
     print('The task has been added!')
