@@ -329,6 +329,13 @@ files:
     if __name__ == '__main__':
         ToDoList('todolist.todolist').run_tests()
   learner_created: false
+- name: todolist/todolist.py
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/105/stages/573/implement
-status: Unchecked
+status: Solved
+feedback:
+  message: Congratulations! Continue on <a href="https://hyperskill.org/projects/105/stages/573/implement">JetBrains
+    Academy</a>
+  time: Fri, 17 Jul 2020 08:46:59 UTC
 record: -1

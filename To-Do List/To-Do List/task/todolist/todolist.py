@@ -33,7 +33,11 @@ def main():
         elif action == 3:
             all_tasks(session)
         elif action == 4:
+            missed_tasks(session)
+        elif action == 5:
             add_task(session)
+        elif action == 6:
+            delete_task(session)
         else:
             break
 
@@ -42,7 +46,9 @@ def ask_action():
     print("1) Today's tasks")
     print("2) Week's tasks")
     print("3) All tasks")
-    print("4) Add task")
+    print("4) Missed tasks")
+    print("5) Add task")
+    print("6) Delete task")
     print("0) Exit")
     return int(input())
 
@@ -71,8 +77,24 @@ def week_tasks(session):
 def all_tasks(session):
     rows = session\
         .query(TaskTable)\
+        .order_by(TaskTable.deadline)\
         .all()
     print_tasks(rows)
+
+
+def missed_tasks(session):
+    today = datetime.today().date()
+    rows = session\
+        .query(TaskTable)\
+        .filter(TaskTable.deadline < today)\
+        .order_by(TaskTable.deadline)\
+        .all()
+    if len(rows) == 0:
+        print('Nothing is missed!')
+    else:
+        print('Missed tasks:')
+        print_tasks(rows)
+    print()
 
 
 def print_tasks(rows):
@@ -97,6 +119,23 @@ def add_task(session):
     session.add(row)
     session.commit()
     print('The task has been added!')
+    print()
+
+
+def delete_task(session):
+    rows = session\
+        .query(TaskTable)\
+        .order_by(TaskTable.deadline)\
+        .all()
+    if len(rows) == 0:
+        print("Nothing to delete!")
+    else:
+        print("Choose the number of the task you want to delete:")
+        print_tasks(rows)
+        n = int(input())
+        session.delete(rows[n - 1])
+        session.commit()
+        print('The task has been deleted!')
     print()
 
 
