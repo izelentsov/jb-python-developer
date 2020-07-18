@@ -2,3 +2,5 @@
 venv/
 Text-Based\ Browser/Text-Based\ Browser/task/browser/store
 __pycache__/
+*.db
+*.s3db
