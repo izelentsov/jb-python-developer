@@ -80,8 +80,24 @@ def create_account():
 
 
 def generate_card_num():
-    id = ''.join([str(random.randint(0, 9)) for _ in range(9)])
-    return '400000' + id + str(random.randint(0, 9))
+    bid = [4, 0, 0, 0, 0, 0]
+    aid = [random.randint(0, 9) for _ in range(9)]
+    num = bid + aid
+    luhn = calc_luhn(num)
+    checksum = 10 - luhn % 10
+    num.append(checksum)
+    return ''.join([str(x) for x in num])
+
+
+def calc_luhn(num):
+    res = 0
+    for n in range(0, len(num)):
+        if n % 2 == 0:
+            x = num[n] * 2
+            res += x if x <= 9 else x - 9
+        else:
+            res += num[n]
+    return res
 
 
 def generate_pin():
@@ -113,6 +129,7 @@ def card_menu(card):
         print_balance(card)
         return card, CMD_NEXT
     elif action == ACT_CARD_LOGOUT:
+        print('You have successfully logged out!')
         return None, CMD_NEXT
 
 
