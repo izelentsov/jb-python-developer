@@ -1,5 +1,6 @@
 # Write your code here
 
+import sqlite3
 import random
 
 CMD_NEXT = 0
@@ -13,7 +14,32 @@ ACT_CARD_EXIT = 0
 ACT_CARD_BALANCE = 1
 ACT_CARD_LOGOUT = 2
 
-db = {}
+
+class Database:
+    def __init__(self, conn):
+        self.conn = conn
+        self.cur = conn.cursor()
+        self.cache = {}
+
+    def create(self):
+        self.cur.execute(
+            """CREATE TABLE IF NOT EXISTS card (
+              id INTEGER,
+              number TEXT,
+              pin TEXT,
+              balance INTEGER DEFAULT 0
+              );
+            """)
+        self.conn.commit()
+
+    def add_card(self, card):
+        self.cur.execute('INSERT INTO card (id, number, pin, balance) ' +
+                         f'VALUES (0, {card.num}, {card.pin}, {card.balance});')
+        self.conn.commit()
+        self.cache[card.num] = card
+
+    def get_card(self, num):
+        return self.cache[num] if num in self.cache else None
 
 
 class Card:
@@ -24,10 +50,12 @@ class Card:
 
 
 def main():
+    db = Database(sqlite3.connect('card.s3db'))
+    db.create()
     active = None
     while True:
         if active is None:
-            active, cmd = main_menu()
+            active, cmd = main_menu(db)
         else:
             active, cmd = card_menu(active)
         print()
@@ -35,14 +63,14 @@ def main():
             break
 
 
-def main_menu():
+def main_menu(db):
     action = ask_action()
     print()
     if action == ACT_CREATE:
-        create_account()
+        create_account(db)
         return None, CMD_NEXT
     elif action == ACT_LOGIN:
-        card = login()
+        card = login(db)
         return card, CMD_NEXT
     elif action == ACT_EXIT:
         return None, CMD_STOP
@@ -67,7 +95,7 @@ def ask_action():
             return None
 
 
-def create_account():
+def create_account(db):
     num = generate_card_num()
     pin = generate_pin()
     card = Card(num, pin, 0)
@@ -76,7 +104,7 @@ def create_account():
     print(num)
     print('Your card PIN:')
     print(pin)
-    save(card)
+    save(db, card)
 
 
 def generate_card_num():
@@ -104,17 +132,18 @@ def generate_pin():
     return ''.join([str(random.randint(0, 9)) for _ in range(4)])
 
 
-def save(card):
-    db[card.num] = card
+def save(db, card):
+    db.add_card(card)
 
 
-def login():
-    card = input('Enter your card number: ')
+def login(db):
+    num = input('Enter your card number: ')
     pin = input('Enter your PIN: ')
     print()
-    if card in db and pin == db[card].pin:
+    card = db.get_card(num)
+    if card is not None and pin == card.pin:
         print('You have successfully logged in!')
-        return db[card]
+        return card
     else:
         print('Wrong card number or PIN!')
         return None
