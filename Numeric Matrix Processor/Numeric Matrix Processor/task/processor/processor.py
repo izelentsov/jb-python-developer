@@ -1,11 +1,15 @@
 def main():
-    m1 = read_matrix()
-    m2 = read_matrix()
-    res = msum(m1, m2)
-    if res is not None:
-        print_matrix(res)
-    else:
-        print('ERROR')
+    #m1 = read_matrix()
+    #m2 = read_matrix()
+    #res = msum(m1, m2)
+    #if res is not None:
+        #print_matrix(res)
+    #else:
+        #print('ERROR')
+    m = read_matrix()
+    c = read_const()
+    res = mscale(m, c)
+    print_matrix(res)
 
 
 def read_matrix():
@@ -17,6 +21,10 @@ def read_matrix():
     return m
 
 
+def read_const():
+    return int(input())
+
+
 def msum(m1, m2):
     rows = len(m1)
     cols = len(m1[0])
@@ -24,6 +32,10 @@ def msum(m1, m2):
         return [[(m1[i][j] + m2[i][j]) for j in range(cols)] for i in range(rows)]
     else:
         return None
+
+
+def mscale(m, c):
+    return [[(cell * c) for cell in row] for row in m]
 
 
 def print_matrix(m):
