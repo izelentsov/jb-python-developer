@@ -12,14 +12,16 @@ ACT_LOGIN = 2
 
 ACT_CARD_EXIT = 0
 ACT_CARD_BALANCE = 1
-ACT_CARD_LOGOUT = 2
+ACT_CARD_INCOME = 2
+ACT_CARD_TRANSFER = 3
+ACT_CARD_CLOSE = 4
+ACT_CARD_LOGOUT = 5
 
 
 class Database:
     def __init__(self, conn):
         self.conn = conn
         self.cur = conn.cursor()
-        self.cache = {}
 
     def create(self):
         self.cur.execute(
@@ -36,10 +38,28 @@ class Database:
         self.cur.execute('INSERT INTO card (id, number, pin, balance) ' +
                          f'VALUES (0, {card.num}, {card.pin}, {card.balance});')
         self.conn.commit()
-        self.cache[card.num] = card
 
     def get_card(self, num):
-        return self.cache[num] if num in self.cache else None
+        self.cur.execute('SELECT number, pin, balance FROM card ' +
+                         f'WHERE number = {num};')
+        row = self.cur.fetchone()
+        return Card(row[0], row[1], row[2]) if row is not None else None
+
+    def income(self, num, amount):
+        self.cur.execute(f'UPDATE card SET balance = balance + {amount} ' +
+                         f'WHERE number = {num}')
+        self.conn.commit()
+
+    def transfer(self, from_num, to_num, amount):
+        self.cur.execute(f'UPDATE card SET balance = balance - {amount} ' +
+                         f'WHERE number = {from_num}')
+        self.cur.execute(f'UPDATE card SET balance = balance + {amount} ' +
+                         f'WHERE number = {to_num}')
+        self.conn.commit()
+
+    def delete_card(self, num):
+        self.cur.execute(f'DELETE FROM card WHERE number = {num};')
+        self.conn.commit()
 
 
 class Card:
@@ -57,7 +77,7 @@ def main():
         if active is None:
             active, cmd = main_menu(db)
         else:
-            active, cmd = card_menu(active)
+            active, cmd = card_menu(active, db)
         print()
         if cmd == CMD_STOP:
             break
@@ -111,8 +131,7 @@ def generate_card_num():
     bid = [4, 0, 0, 0, 0, 0]
     aid = [random.randint(0, 9) for _ in range(9)]
     num = bid + aid
-    luhn = calc_luhn(num)
-    checksum = 10 - luhn % 10
+    checksum = calc_luhn(num)
     num.append(checksum)
     return ''.join([str(x) for x in num])
 
@@ -125,7 +144,13 @@ def calc_luhn(num):
             res += x if x <= 9 else x - 9
         else:
             res += num[n]
-    return res
+    return 0 if res % 10 == 0 else (10 - res % 10)
+
+
+def check_luhn(num):
+    checked = [int(c) for c in num[:15]]
+    checksum = calc_luhn(checked)
+    return int(num[15]) == checksum
 
 
 def generate_pin():
@@ -143,20 +168,29 @@ def login(db):
     card = db.get_card(num)
     if card is not None and pin == card.pin:
         print('You have successfully logged in!')
-        return card
+        return num
     else:
         print('Wrong card number or PIN!')
         return None
 
 
-def card_menu(card):
+def card_menu(num, db):
     action = ask_card_action()
     print()
     if action == ACT_CARD_EXIT:
         return None, CMD_STOP
     elif action == ACT_CARD_BALANCE:
-        print_balance(card)
-        return card, CMD_NEXT
+        print_balance(num, db)
+        return num, CMD_NEXT
+    elif action == ACT_CARD_INCOME:
+        income(num, db)
+        return num, CMD_NEXT
+    elif action == ACT_CARD_TRANSFER:
+        transfer(num, db)
+        return num, CMD_NEXT
+    elif action == ACT_CARD_CLOSE:
+        close_account(num, db)
+        return num, CMD_NEXT
     elif action == ACT_CARD_LOGOUT:
         print('You have successfully logged out!')
         return None, CMD_NEXT
@@ -164,7 +198,10 @@ def card_menu(card):
 
 def ask_card_action():
     print('1. Balance')
-    print('2. Log out')
+    print('2. Add income')
+    print('3. Do transfer')
+    print('4. Close account')
+    print('5. Log out')
     print('0. Exit')
 
     try:
@@ -180,8 +217,43 @@ def ask_card_action():
             return None
 
 
-def print_balance(card):
-    print(f'Balance: {card.balance}')
+def print_balance(num, db):
+    card = db.get_card(num)
+    if card is not None:
+        print(f'Balance: {card.balance}')
+    else:
+        print(f'No card info')
+
+
+def income(num, db):
+    amount = int(input('Enter income: '))
+    db.income(num, amount)
+
+
+def transfer(num, db):
+    print('Transfer')
+    other = input('Enter card number: ')
+
+    if not check_luhn(other):
+        print('Probably you made mistake in the card number. Please try again!')
+        return
+
+    other_card = db.get_card(other)
+    if other_card is None:
+        print('Such a card does not exist.')
+        return
+
+    amount = int(input('Enter how much money you want to transfer: '))
+    card = db.get_card(num)
+    if amount > card.balance:
+        print('Not enough money!')
+        return
+
+    db.transfer(num, other, amount)
+
+
+def close_account(num, db):
+    db.delete_card(num)
 
 
 main()
