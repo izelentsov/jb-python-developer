@@ -3,6 +3,7 @@ ACT_ADD = 1
 ACT_SCALE = 2
 ACT_MULT = 3
 ACT_TRANSPOSE = 4
+ACT_DETERMINANT = 5
 
 TRANS_MAIN = 1
 TRANS_SIDE = 2
@@ -55,6 +56,27 @@ class Matrix:
         res = [[self.cells[-i - 1][j] for j in range(self.cols)] for i in range(self.rows)]
         return Matrix(res)
 
+    def det(self):
+        if self.rows != self.cols:
+            return None
+        if self.rows == 1:
+            return self.cells[0][0]
+        if self.rows == 2:
+            return self.cells[0][0] * self.cells[1][1] - \
+                   self.cells[0][1] * self.cells[1][0]
+        return sum([self.cells[i][0] * self.cofactor(i, 0) for i in range(self.rows)])
+
+    def cofactor(self, i, j):
+        return self.minor(i, j) * ((-1) ** (i + j))
+
+    def minor(self, i, j):
+        return self.submatrix(i, j).det()
+
+    def submatrix(self, row, col):
+        res = [[self.cells[i][j] for j in range(self.cols) if j != col]
+               for i in range(self.rows) if i != row]
+        return Matrix(res)
+
     def __str__(self):
         res = ''
         for row in self.cells:
@@ -75,6 +97,8 @@ def main():
             do_mult()
         elif action == ACT_TRANSPOSE:
             transpose_menu()
+        elif action == ACT_DETERMINANT:
+            do_determinant()
         print()
 
 
@@ -83,6 +107,7 @@ def menu():
     print('2. Multiply matrix by a constant')
     print('3. Multiply matrices')
     print('4. Transpose matrix')
+    print('5. Calculate determinant')
     print('0. Exit')
     return int(input('Your choice: '))
 
@@ -115,6 +140,13 @@ def do_mult():
         print_matrix(res)
     else:
         print('ERROR')
+
+
+def do_determinant():
+    m = read_matrix('')
+    res = m.det()
+    print('The result is:')
+    print_matrix(res)
 
 
 def read_matrix(label):
