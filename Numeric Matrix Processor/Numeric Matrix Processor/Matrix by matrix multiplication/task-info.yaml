@@ -279,5 +279,9 @@ files:
         CalcTest("processor.processor").run_tests()
   learner_created: false
 feedback_link: https://hyperskill.org/projects/96/stages/530/implement
-status: Unchecked
-record: -1
+status: Solved
+feedback:
+  message: Congratulations! Continue on <a href="https://hyperskill.org/projects/96/stages/530/implement">JetBrains
+    Academy</a>
+  time: Sun, 19 Jul 2020 09:16:54 UTC
+record: 3
