@@ -4,6 +4,7 @@ ACT_SCALE = 2
 ACT_MULT = 3
 ACT_TRANSPOSE = 4
 ACT_DETERMINANT = 5
+ACT_INVERSE = 6
 
 TRANS_MAIN = 1
 TRANS_SIDE = 2
@@ -77,6 +78,17 @@ class Matrix:
                for i in range(self.rows) if i != row]
         return Matrix(res)
 
+    def inverse(self):
+        det = self.det()
+        if det == 0:
+            return None
+        c = self.all_cofactors()
+        return c.transpose_main().scale(1.0 / det)
+
+    def all_cofactors(self):
+        c = [[self.cofactor(i, j) for j in range(self.cols)] for i in range(self.rows)]
+        return Matrix(c)
+
     def __str__(self):
         res = ''
         for row in self.cells:
@@ -99,6 +111,8 @@ def main():
             transpose_menu()
         elif action == ACT_DETERMINANT:
             do_determinant()
+        elif action == ACT_INVERSE:
+            do_inverse()
         print()
 
 
@@ -108,6 +122,7 @@ def menu():
     print('3. Multiply matrices')
     print('4. Transpose matrix')
     print('5. Calculate determinant')
+    print('6. Inverse matrix')
     print('0. Exit')
     return int(input('Your choice: '))
 
@@ -147,6 +162,16 @@ def do_determinant():
     res = m.det()
     print('The result is:')
     print_matrix(res)
+
+
+def do_inverse():
+    m = read_matrix('')
+    res = m.inverse()
+    if res is not None:
+        print('The result is:')
+        print_matrix(res)
+    else:
+        print("This matrix doesn't have an inverse.")
 
 
 def read_matrix(label):
