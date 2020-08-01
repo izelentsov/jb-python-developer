@@ -134,9 +134,6 @@ files:
         test.run_tests()
         test.stop_server()
   learner_created: false
-- name: hacking/passwords.txt
-  visible: true
-  learner_created: true
 - name: passwords.txt
   visible: true
   learner_created: true
@@ -146,4 +143,4 @@ feedback:
   message: Congratulations! Continue on <a href="https://hyperskill.org/projects/80/stages/444/implement">JetBrains
     Academy</a>
   time: Sat, 01 Aug 2020 12:05:00 UTC
-record: -1
+record: 3
