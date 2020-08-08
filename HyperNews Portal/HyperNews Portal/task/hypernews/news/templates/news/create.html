@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% include "news/title.html" %}
+    <meta charset="utf-8">
+</head>
+
+<body>
+    <h4>Create</h4>
+
+    <form action="/news/create" method="post">
+        {% csrf_token %}
+        <label for="n_title">Title:</label>
+        <input type="text" name="title" id="n_title">
+        <br>
+        <label for="n_text">Text:</label>
+        <input type="text" name="text" id="n_text">
+        <br>
+        <button type="submit">Create</button>
+    </form>
+
+    <p><a target="_blank" href="/news/">Main</a></p>
+</body>
+</html>

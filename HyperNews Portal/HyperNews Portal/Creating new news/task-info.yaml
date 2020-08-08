@@ -1180,6 +1180,13 @@ files:
     news 2", "title": "News 2", "link": 2}, {"created": "2020-02-09 16:15:10", "text":
     "Text of the news 3", "title": "News 3", "link": 3}]'
   learner_created: true
+- name: hypernews/news/templates/news/create.html
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/102/stages/564/implement
-status: Unchecked
-record: -1
+status: Solved
+feedback:
+  message: Congratulations! Continue on <a href="https://hyperskill.org/projects/102/stages/564/implement">JetBrains
+    Academy</a>
+  time: Sat, 08 Aug 2020 21:38:05 UTC
+record: 4
