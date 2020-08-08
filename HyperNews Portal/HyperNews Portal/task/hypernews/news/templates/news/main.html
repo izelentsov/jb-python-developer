@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% include "news/title.html" %}
+    <meta charset="utf-8">
+</head>
+<body>
+    <h2>Hyper news</h2>
+
+    {% for d in news.dates %}
+        <h4>{{ d.date }}</h4>
+        <ul>
+        {% for n in d.news %}
+            <li>
+                <a target="_blank" href="/news/{{ n.link }}/">
+                    {{ n.title }}
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+
+    <a target="_blank" href="/news/create/">Create</a>
+</body>
+</html>

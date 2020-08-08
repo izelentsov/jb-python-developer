@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% include "news/title.html" %}
+    <meta charset="utf-8">
+</head>
+<body>
+    <h2>{{ news.title }}</h2>
+    <p>{{ news.created }}</p>
+    <p>{{ news.text }}</p>
+
+    <p><a target="_blank" href="/news/">Main</a></p>
+</body>
+</html>

@@ -27,7 +27,7 @@ class HyperNewsTest(DjangoTest):
 
     def __init__(self, *args, **kwargs):
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        self.news_file_name = 'news.json'
+        self.news_file_name = 'hypernews/news.json'
         os.environ['NEWS_JSON_PATH'] = os.path.join(current_dir,
                                                     self.news_file_name)
         super().__init__(*args, **kwargs)
@@ -208,7 +208,7 @@ class HyperNewsTest(DjangoTest):
         if filtered_h4 != created_list_str:
             return CheckResult.false(
                 'Main page should contain <h4> elements grouped by '
-                'date created and first should be fresh news.'
+                'date created and first should be fresh news. '
             )
 
         for news in news_data:

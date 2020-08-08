@@ -1118,6 +1118,41 @@ files:
     if __name__ == '__main__':
         HyperNewsTestRunner('hypernews.manage').run_tests()
   learner_created: false
+- name: hypernews/news/templates/news/item.html
+  visible: true
+  text: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Hyper News</title>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <h2>{{ news.title }}</h2>
+        <p>{{ news.created }}</p>
+        <p>{{ news.text }}</p>
+
+        <p><a target="_blank" href="/news/">Main</a></p>
+    </body>
+    </html>
+  learner_created: true
+- name: hypernews/news.json
+  visible: true
+  text: '[{"created": "2020-02-09 14:15:10", "text": "Text of the news 1", "title":
+    "News 1", "link": 1}, {"created": "2020-02-10 14:15:10", "text": "Text of the
+    news 2", "title": "News 2", "link": 2}, {"created": "2020-02-09 16:15:10", "text":
+    "Text of the news 3", "title": "News 3", "link": 3}]'
+  learner_created: true
+- name: hypernews/news/templates/news/main.html
+  visible: true
+  learner_created: true
+- name: hypernews/news/templates/news/title.html
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/102/stages/563/implement
-status: Unchecked
-record: -1
+status: Solved
+feedback:
+  message: Congratulations! Continue on <a href="https://hyperskill.org/projects/102/stages/563/implement">JetBrains
+    Academy</a>
+  time: Sat, 08 Aug 2020 19:59:19 UTC
+record: 3
