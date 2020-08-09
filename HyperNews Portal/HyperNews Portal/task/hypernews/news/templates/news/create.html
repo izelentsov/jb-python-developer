@@ -4,10 +4,12 @@
 <head>
     {% include "news/title.html" %}
     <meta charset="utf-8">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
 </head>
 
 <body>
-    <h4>Create</h4>
+    <h2>Create</h2>
 
     <form action="/news/create" method="post">
         {% csrf_token %}

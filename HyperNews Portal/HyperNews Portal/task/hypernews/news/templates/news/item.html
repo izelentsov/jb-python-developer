@@ -3,10 +3,12 @@
 <head>
     {% include "news/title.html" %}
     <meta charset="utf-8">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
 </head>
 <body>
     <h2>{{ news.title }}</h2>
-    <p>{{ news.created }}</p>
+    <h4>{{ news.created }}</h4>
     <p>{{ news.text }}</p>
 
     <p><a target="_blank" href="/news/">Main</a></p>

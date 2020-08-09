@@ -10,7 +10,7 @@ import random
 # Create your views here.
 class NewsMainView(View):
     def get(self, request, *args, **kwargs):
-        n = read_news_main(settings.NEWS_JSON_PATH)
+        n = read_news_main(settings.NEWS_JSON_PATH, request.GET.get('q'))
         context = {
             'news': n
         }
@@ -39,16 +39,14 @@ class NewsCreateView(View):
 
 class ComingSoonView(View):
     def get(self, request, *args, **kwargs):
-        return HttpResponse('<p>Coming soon</p>')
+        # return HttpResponse('<p>Coming soon</p>')
+        return redirect('/news/')
 
 
-def read_all_news(path):
-    with open(path, 'r') as f:
-        return json.load(f)
-
-
-def read_news_main(path):
+def read_news_main(path, keyword):
     all_news = read_all_news(path)
+    if keyword is not None:
+        all_news = filter_by_keyword(all_news, keyword)
     return group_by_date(all_news)
 
 
@@ -66,6 +64,15 @@ def add_news(path, title, text):
     n = create_news(title, text, links)
     all_news.append(n)
     write_news(path, all_news)
+
+
+def read_all_news(path):
+    with open(path, 'r') as f:
+        return json.load(f)
+
+
+def filter_by_keyword(news, kw):
+    return list(filter(lambda n: kw in n['title'], news))
 
 
 def create_news(title, text, links):

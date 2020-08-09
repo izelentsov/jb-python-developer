@@ -1212,6 +1212,13 @@ files:
     </body>
     </html>
   learner_created: true
+- name: hypernews/static/css/base.css
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/102/stages/565/implement
-status: Unchecked
+status: Solved
+feedback:
+  message: Congratulations! Continue on <a href="https://hyperskill.org/projects/102/stages/565/implement">JetBrains
+    Academy</a>
+  time: Sun, 09 Aug 2020 15:00:42 UTC
 record: -1
