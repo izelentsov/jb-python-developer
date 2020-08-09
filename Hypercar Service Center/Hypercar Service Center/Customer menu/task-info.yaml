@@ -691,6 +691,31 @@ files:
         """ Reports success """
         print("#educational_plugin test OK")
   learner_created: false
+- name: hypercar/tickets/templates/tickets/welcome.html
+  visible: true
+  text: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Hypercar Service Center</title>
+        <meta charset="utf-8">
+    </head>
+
+    <body>
+        <h2>Welcome to the Hypercar Service!</h2>
+    </body>
+    </html>
+  learner_created: true
+- name: hypercar/tickets/templates/tickets/base.html
+  visible: true
+  learner_created: true
+- name: hypercar/tickets/templates/tickets/menu.html
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/85/stages/471/implement
-status: Unchecked
-record: -1
+status: Solved
+feedback:
+  message: Congratulations! Continue on <a href="https://hyperskill.org/projects/85/stages/471/implement">JetBrains
+    Academy</a>
+  time: Sun, 09 Aug 2020 22:52:08 UTC
+record: 2

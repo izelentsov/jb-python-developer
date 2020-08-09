@@ -720,6 +720,42 @@ files:
         """ Reports success """
         print("#educational_plugin test OK")
   learner_created: false
+- name: hypercar/tickets/templates/tickets/welcome.html
+  visible: true
+  text: |
+    {% extends 'tickets/base.html' %}
+    {% block body %}
+        <h2>Welcome to the Hypercar Service!</h2>
+    {%  endblock %}
+  learner_created: true
+- name: hypercar/tickets/templates/tickets/base.html
+  visible: true
+  text: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>{% block title %} Hypercar Service Center {% endblock %}</title>
+        <meta charset="utf-8">
+    </head>
+
+    <body>
+        {% block body %} {% endblock %}
+    </body>
+    </html>
+  learner_created: true
+- name: hypercar/tickets/templates/tickets/menu.html
+  visible: true
+  text: |
+    {% extends 'tickets/base.html' %}
+    {% block body %}
+        <h2>Main Menu</h2>
+        <ul>
+            <li><a target="_blank" href="/get_ticket/change_oil">Change oil</a></li>
+            <li><a target="_blank" href="/get_ticket/inflate_tires">Inflate tires</a></li>
+            <li><a target="_blank" href="/get_ticket/diagnostic">Get diagnostic test</a></li>
+        </ul>
+    {%  endblock %}
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/85/stages/472/implement
 status: Unchecked
 record: -1

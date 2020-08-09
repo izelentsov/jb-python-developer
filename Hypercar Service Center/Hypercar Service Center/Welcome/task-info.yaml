@@ -683,6 +683,16 @@ files:
         def get(self, request, *args, **kwargs):
             return HttpResponse('')
   learner_created: false
+- name: hypercar/tickets/templates/tickets/welcome.html
+  visible: true
+  learner_created: true
+- name: hypercar/db.sqlite3
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/85/stages/470/implement
-status: Unchecked
-record: -1
+status: Solved
+feedback:
+  message: Congratulations! Continue on <a href="https://hyperskill.org/projects/85/stages/470/implement">JetBrains
+    Academy</a>
+  time: Sun, 09 Aug 2020 15:28:43 UTC
+record: 1
