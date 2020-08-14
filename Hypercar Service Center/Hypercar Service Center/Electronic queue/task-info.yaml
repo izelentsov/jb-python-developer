@@ -756,6 +756,13 @@ files:
         </ul>
     {%  endblock %}
   learner_created: true
+- name: hypercar/tickets/templates/tickets/get_ticket.html
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/85/stages/472/implement
-status: Unchecked
-record: -1
+status: Solved
+feedback:
+  message: Congratulations! Continue on <a href="https://hyperskill.org/projects/85/stages/472/implement">JetBrains
+    Academy</a>
+  time: Fri, 14 Aug 2020 23:40:33 UTC
+record: 3

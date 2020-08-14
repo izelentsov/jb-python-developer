@@ -16,6 +16,10 @@ stages:
   step: 7698
 topics:
   0:
+  - title: Errors
+    theory_id: 6052
+  - title: Exceptions
+    theory_id: 6042
   - title: Introduction to OOP
     theory_id: 3614
   - title: The concept of patterns
@@ -80,10 +84,6 @@ topics:
     theory_id: 5872
   - title: Program execution
     theory_id: 6047
-  - title: Errors
-    theory_id: 6052
-  - title: Exceptions
-    theory_id: 6042
   - title: Comparisons
     theory_id: 5920
   - title: String formatting
