@@ -809,6 +809,59 @@ files:
         """ Reports success """
         print("#educational_plugin test OK")
   learner_created: false
+- name: hypercar/tickets/templates/tickets/welcome.html
+  visible: true
+  text: |
+    {% extends 'tickets/base.html' %}
+    {% block body %}
+        <h2>Welcome to the Hypercar Service!</h2>
+    {%  endblock %}
+  learner_created: true
+- name: hypercar/tickets/templates/tickets/get_ticket.html
+  visible: true
+  text: |
+    {% extends 'tickets/base.html' %}
+    {% block body %}
+        <h2>Get Ticket</h2>
+        <div>Your number is {{t_num}}</div>
+        <div>Please wait around {{w_time}} minutes</div>
+    {%  endblock %}
+  learner_created: true
+- name: hypercar/tickets/templates/tickets/base.html
+  visible: true
+  text: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>{% block title %} Hypercar Service Center {% endblock %}</title>
+        <meta charset="utf-8">
+    </head>
+
+    <body>
+        {% block body %} {% endblock %}
+    </body>
+    </html>
+  learner_created: true
+- name: hypercar/tickets/templates/tickets/menu.html
+  visible: true
+  text: |
+    {% extends 'tickets/base.html' %}
+    {% block body %}
+        <h2>Main Menu</h2>
+        <ul>
+            <li><a target="_blank" href="/get_ticket/change_oil">Change oil</a></li>
+            <li><a target="_blank" href="/get_ticket/inflate_tires">Inflate tires</a></li>
+            <li><a target="_blank" href="/get_ticket/diagnostic">Get diagnostic test</a></li>
+        </ul>
+    {%  endblock %}
+  learner_created: true
+- name: hypercar/tickets/templates/tickets/next.html
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/85/stages/474/implement
-status: Unchecked
+status: Solved
+feedback:
+  message: Congratulations! Continue on <a href="https://hyperskill.org/projects/85/stages/474/implement">JetBrains
+    Academy</a>
+  time: Sat, 15 Aug 2020 00:31:18 UTC
 record: -1

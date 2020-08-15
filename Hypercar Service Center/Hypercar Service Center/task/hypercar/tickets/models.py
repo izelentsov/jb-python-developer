@@ -31,6 +31,7 @@ class Ticket:
 class ServQueue:
     def __init__(self):
         self.q = {}
+        self.next = None
         for s in serv_times.keys():
             self.q[s] = []
 
@@ -47,5 +48,18 @@ class ServQueue:
                 break
         return res
 
+    def q_size(self, serv_type):
+        return len(self.q[serv_type])
+
+    def next_ticket(self):
+        return self.next
+
+    def choose_next(self):
+        self.next = None
+        for s in serv_times:
+            if len(self.q[s]) > 0:
+                self.next = self.q[s].pop(0)
+                break
+        return self.next
 
 queue = ServQueue()

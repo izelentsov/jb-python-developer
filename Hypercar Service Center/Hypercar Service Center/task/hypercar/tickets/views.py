@@ -1,6 +1,6 @@
 from django.views import View
 from django.views.generic.base import TemplateView
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http.response import HttpResponse
 from tickets.models import new_ticket, queue, SERV_DIAG, SERV_OIL, SERV_TIRES
 
@@ -36,3 +36,28 @@ class GetTicketView(View):
         if serv_type_s == "diagnostic":
             return SERV_DIAG
         return None
+
+
+class ProcessingView(TemplateView):
+    template_name = 'tickets/processing.html'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['q_oil'] = queue.q_size(SERV_OIL)
+        ctx['q_tires'] = queue.q_size(SERV_TIRES)
+        ctx['q_diag'] = queue.q_size(SERV_DIAG)
+        return ctx
+
+    def post(self, request, *args, **kwargs):
+        queue.choose_next()
+        return redirect(to="/next")
+
+
+class NextView(TemplateView):
+    template_name = 'tickets/next.html'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        nt = queue.next_ticket()
+        ctx['next_ticket'] = nt.id if nt is not None else None
+        return ctx

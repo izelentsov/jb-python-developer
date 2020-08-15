@@ -1,0 +1,12 @@
+{% extends 'tickets/base.html' %}
+{% block body %}
+    <h2>Processing</h2>
+    <div>Change oil queue: {{q_oil}}</div>
+    <div>Inflate tires queue: {{q_tires}}</div>
+    <div>Get diagnostic queue: {{q_diag}}</div>
+
+    <form method="post" action="/processing">
+        {% csrf_token %}
+        <button type="submit" >Process next</button>
+    </form>
+{%  endblock %}
