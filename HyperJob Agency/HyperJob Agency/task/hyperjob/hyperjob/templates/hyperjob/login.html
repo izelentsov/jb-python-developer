@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>HyperJob Agency - Login</title>
+</head>
+<body>
+    <form method="post" action="/login">
+        {% csrf_token %}
+        <ul>{{ form.as_ul }}</ul>
+        <button action="submit">Login</button>
+    </form>
+</body>
+</html>
