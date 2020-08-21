@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>HyperJob Agency - Signup</title>
-</head>
-<body>
+{% extends "hyperjob/base.html" %}
+
+{% block title %} Signup {% endblock %}
+
+{% block content %}
     <form method="post" action="/signup">
         {% csrf_token %}
         <table>{{ form.as_table }}</table>
         <button type="submit">Signup</button>
     </form>
-</body>
-</html>
+{% endblock %}

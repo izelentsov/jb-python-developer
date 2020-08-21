@@ -1,12 +1,9 @@
-<!DOCYTYPE html>
-<html>
-<head>
-    <title>HyperJob Agency - Vacancies</title>
-    <meta charset="utf-8">
-</head>
-<body>
+{% extends "hyperjob/base.html" %}
+
+{% block title %} Vacancies {% endblock %}
+
+{% block content %}
     {% for v in vs %}
         <div>{{ v.author.username }}: {{ v.description }}</div>
     {% endfor %}
-</body>
-</html>
+{% endblock %}

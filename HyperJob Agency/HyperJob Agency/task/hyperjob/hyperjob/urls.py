@@ -15,18 +15,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from hyperjob.views import MenuView, HyperLoginView, HyperSignupView
-from resume.views import ResumesView
-from vacancy.views import VacanciesView
+from hyperjob.views import MenuView, HyperLoginView, HyperSignupView, HomeView
+from resume.views import ResumesView, NewResumeView
+from vacancy.views import VacanciesView, NewVacancyView
 from django.views.generic import RedirectView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', MenuView.as_view()),
     path('vacancies', VacanciesView.as_view()),
+    path('vacancy/new', NewVacancyView.as_view()),
     path('resumes', ResumesView.as_view()),
+    path('resume/new', NewResumeView.as_view()),
     path('signup', HyperSignupView.as_view()),
     path('login', HyperLoginView.as_view()),
+    path('home', HomeView.as_view()),
     path('signup/', RedirectView.as_view(url='/signup')),
     path('login/', RedirectView.as_view(url='/login')),
 ]

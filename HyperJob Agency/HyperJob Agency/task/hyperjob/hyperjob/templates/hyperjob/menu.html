@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>HyperJob Agency</title>
-    <meta charset="utf-8">
-</head>
-<body>
+{% extends "hyperjob/base.html" %}
+
+{% block title %} Menu {% endblock %}
+
+{% block content %}
     <h2>Welcome to HyperJob!</h2>
 
     <div><a href="/login">Login</a></div>
@@ -12,5 +10,4 @@
     <div><a href="/vacancies">Vacancies</a></div>
     <div><a href="/resumes">Resumes</a></div>
     <div><a href="/home">Home</a></div>
-</body>
-</html>
+{% endblock %}

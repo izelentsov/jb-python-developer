@@ -1,12 +1,9 @@
-<!DOCYTYPE html>
-<html>
-<head>
-    <title>HyperJob Agency - Resumes</title>
-    <meta charset="utf-8">
-</head>
-<body>
+{% extends "hyperjob/base.html" %}
+
+{% block title %} Resumes {% endblock %}
+
+{% block content %}
     {% for r in rs %}
         <div>{{ r.author.username }}: {{ r.description }}</div>
     {% endfor %}
-</body>
-</html>
+{% endblock %}

@@ -125,10 +125,6 @@ topics:
   - title: PyCharm basics
     theory_id: 6193
   1:
-  - title: Errors
-    theory_id: 6052
-  - title: Exceptions
-    theory_id: 6042
   - title: Polymorphism
     theory_id: 10027
   - title: Immutability
@@ -177,6 +173,10 @@ topics:
     theory_id: 8560
   - title: Kwargs
     theory_id: 9544
+  - title: Errors
+    theory_id: 6052
+  - title: Exceptions
+    theory_id: 6042
   - title: Method overriding
     theory_id: 7629
   - title: Introduction to Python shell
@@ -202,12 +202,12 @@ topics:
   - title: Inline Elements
     theory_id: 7518
   2:
-  - title: Exception handling
-    theory_id: 6270
   - title: Design principles
     theory_id: 8956
   - title: While loop
     theory_id: 5940
+  - title: Exception handling
+    theory_id: 6270
   - title: Queries and filters
     theory_id: 7005
   - title: Using models with templates

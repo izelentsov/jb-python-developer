@@ -187,6 +187,11 @@ class StageTest:
             self.get_print_back()
             failed(error_msg + '\n\n' + ex.message)
 
+        except UnexpectedErrorException as ex:
+            error_msg = f'Exception in test #{test_number}'
+            self.get_print_back()
+            failed(error_msg + '\n\n' + str(ex))
+
         except Exception:
 
             exc_type, exc_obj, exc_tb = sys.exc_info()
