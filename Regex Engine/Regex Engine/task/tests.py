@@ -1,6 +1,6 @@
 # coding: utf-8
 from hstest.stage_test import StageTest
-from hstest.test_case import SimpleTestCase
+from hstest.test_case import TestCase, SimpleTestCase
 
 
 class RegexTest(StageTest):
@@ -22,7 +22,70 @@ class RegexTest(StageTest):
         (".....", "apple",  "True",     "The wild-card '.' should match any single character in a string."),
         ("", "apple",       "True",     "An empty regex always returns True!"),
         ("apple", "",       "False",    "A non-empty regex and an empty input string always returns False!"),
-        ("apple", "peach",  "False",    "Two different patterns should not return True!")
+        ("apple", "peach",  "False",    "Two different patterns should not return True!"),
+        # stage 3
+        ("le", "apple",     "True",     "If the input string contains the regex, it should return True!"),
+        ("app", "apple",    "True",     "If the input string contains the regex, it should return True!"),
+        ("a", "apple",      "True",     "If the input string contains the regex, it should return True!"),
+        (".", "apple",      "True",     "Even a single wild-card character '.' can produce a match!"),
+        ("apwle", "apple",  "False",    "Two different patterns should not return True!"),
+        ("peach", "apple",  "False",    "Two different patterns should not return True!"),
+        # stage 4
+        ('^app', 'apple',           "True",
+            "A regex starting with '^' should match the following pattern only at the beginning of the input string!"),
+        ('le$', 'apple',            "True",
+            "A regex ending with '$' should match the preceding pattern only at the end of the input string!"),
+        ('^a', 'apple',             "True",
+            "A regex starting with '^' should match the following pattern only at the beginning of the input string!"),
+        ('.$', 'apple',             "True",
+            "A regex ending with '$' should match the preceding pattern only at the end of the input string!"),
+        ('apple$', 'tasty apple',   "True",
+            "A regex ending with '$' should match the preceding pattern only at the end of the input string!"),
+        ('^apple', 'apple pie',     "True",
+            "A regex starting with '^' should match the following pattern only at the beginning of the input string!"),
+        ('^apple$', 'apple',        "True",
+            "A regex starting with '^' and ending with '$' should match only the enclosed literals!"),
+        ('^apple$', 'tasty apple',  "False",
+            "A regex starting with '^' and ending with '$' should match only the enclosed literals!"),
+        ('^apple$', 'apple pie',    "False",
+            "A regex starting with '^' and ending with '$' should match only the enclosed literals!"),
+        ('app$', 'apple',           "False",
+            "A regex ending with '$' should match the preceding pattern only at the end of the input string!"),
+        ('^le', 'apple',            "False",
+            "A regex starting with '^' should match the following pattern only at the beginning of the input string!"),
+        # stage 5
+        ("colou?r", "color",        "True",
+            "'?' in a regex should match the preceding character exactly 0 or 1 times!"),
+        ("colou?r", "colour",       "True",
+            "'?' in a regex should match the preceding character exactly 0 or 1 times!"),
+        ("colou?r", "colouur",      "False",
+            "'?' in a regex should match the preceding character exactly 0 or 1 times!"),
+        ("colou*r", "color",        "True",
+            "'*' in a regex should match the preceding character 0 or more times!"),
+        ("colou*r", "colour",       "True",
+            "'*' in a regex should match the preceding character 0 or more times!"),
+        ("colou*r", "colouur",      "True",
+            "'*' in a regex should match the preceding character 0 or more times!"),
+        ("colou+r", "colour",        "True",
+             "'+' in a regex should match the preceding character 1 or more times!"),
+        ("colou+r", "color",        "False",
+            "'+' in a regex should match the preceding character 1 or more times!"),
+        (".*", "aaa",               "True",
+            "The repetition operators can be combined with the wild card '.'!"),
+        (".+", "aaa",               "True",
+            "The repetition operators can be combined with the wild card '.'!"),
+        (".?", "aaa",               "True",
+            "The repetition operators can be combined with the wild card '.'!"),
+        ("no+$", "noooooooope",     "False",
+            "The repetition operators can be combined with other metacharacters, like '.', '^' and '$'."),
+        ("^no+", "noooooooope",     "True",
+            "The repetition operators can be combined with other metacharacters, like '.', '^' and '$'."),
+        ("^no+pe$", "noooooooope",     "True",
+            "The repetition operators can be combined with other metacharacters, like '.', '^' and '$'."),
+        ("^n.+pe$", "noooooooope",     "True",
+            "The repetition operators can be combined with other metacharacters, like '.', '^' and '$'."),
+        ("^n.+p$", "noooooooope",     "False",
+            "The repetition operators can be combined with other metacharacters, like '.', '^' and '$'.")
     ]
 
 
