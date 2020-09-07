@@ -7,7 +7,7 @@ def run():
 
 
 def check(re, s):
-#    print("check", re, s)
+    # print("check", re, s)
     if re == '':
         return True
     if re[0] == '^':
@@ -30,8 +30,9 @@ def match(re, s, running):
         return s == ''
 
     op = ''
-    if len(re) > 1:
-        op = re[1]
+    if re_len(re) > 1:
+        op = re_nth(re, 1)
+    # print("Op", op)
 
     if op == '?':
         cons_re, cons_s = match_question(re, s)
@@ -48,14 +49,19 @@ def match(re, s, running):
         running = 0
 
     # print("cons_re", cons_re, "cons_s", cons_s, "running", running)
-    res = (cons_re > 0 or cons_s > 0) and match(re[cons_re:], s[cons_s:], running)
+    if cons_re == 0 and cons_s == 0:
+        return False
+
+    next_re = consume_re_next(re, cons_re)
+    res = match(next_re, s[cons_s:], running)
 
     # if star or plus applied and failed, try consume it and proceed
     if not res and cons_re == 0 and cons_s > 0:
         cons_re = 2
         cons_s = 1
         running = 0
-        res = match(re[cons_re:], s[cons_s:], running)
+        next_re = consume_re_next(re, cons_re)
+        res = match(next_re, s[cons_s:], running)
 
     return res
 
@@ -87,7 +93,40 @@ def match_plus(re, s, running):
 
 
 def match_char(re, s):
-    return s != '' and (re[0] == '.' or re[0] == s[0])
+    return s != '' and (re[0] == '.' or next_re_char(re) == s[0])
+
+
+def re_len(re):
+    i = 0
+    cnt = 0
+    total = len(re)
+    while i < total:
+        cnt += 1
+        i += 1 if re[i] != '\\' else 2
+    return cnt
+
+
+def next_re_char(re):
+    if re[0] == '\\':
+        return re[1]
+    return re[0]
+
+
+def re_nth(re, n):
+    slashes = 0
+    for i in range(n):
+        if re[i + slashes] == '\\':
+            slashes += 1
+    return re[n + slashes]
+
+
+def consume_re_next(re, n):
+    # print('Consume ', n, re)
+    slashes = 0
+    for i in range(n):
+        if re[i + slashes] == '\\':
+            slashes += 1
+    return re[n + slashes:]
 
 
 run()
